@@ -21,12 +21,21 @@ DHT dht(DHTPIN, DHTTYPE);
 int soil_pin = A0;
 int soil_value;
 
+/********************************
+ * Variables de control
+********************************/
+bool isButtonPressed = false;
+int buttonPin = 3;
+
 void setup() {
   // Inicializamos comunicación serie
   Serial.begin(9600);
  
   // Comenzamos el sensor DHT
   dht.begin();
+  // initialize the pushbutton pin as an input:
+  pinMode(buttonPin, INPUT);
+  pinMode(soil_pin, INPUT);
 }
 
 void loop() {
@@ -37,6 +46,11 @@ void loop() {
   float h = dht.readHumidity();
   // Leemos la temperatura en grados centígrados (por defecto)
   float t = dht.readTemperature();
+  // Comprobamos si hay pulsacion de boton, que indica riego.
+  int button = digitalRead(buttonPin);
+  if (button != LOW) {
+    isButtonPressed = true;
+  }
  
   // Comprobamos si ha habido algún error en la lectura
   if (isnan(h) || isnan(t)) {
@@ -48,23 +62,49 @@ void loop() {
   float hic = dht.computeHeatIndex(t, h, false);
 
   // Leemos soil moisture
-  soil_value = analogRead(soil_pin);
+  soil_value = readSensor(soil_pin);
   // Map to percentage
-  soil_value = map(soil_value, 550, 0, 0, 100);
+  //soil_value = map(soil_value, 550, 0, 0, 100);
   // Print to serial console.
-  Serial.print("Humedad Ambiente: ");
+  Serial.print("Humedad");
+  Serial.print("\t");
+  Serial.print("Temperatura");
+  Serial.print("\t");
+  Serial.print("Indice calor");
+  Serial.print("\t");
+  Serial.print("Humedad Suelo");
+  Serial.print("\t");
+  Serial.print("Is Button Pressed? ");
+  Serial.print("\n");
   Serial.print(h);
-  Serial.print(" %\t");
-  Serial.print("Temperatura: ");
+  Serial.print("\t");
+  Serial.print("\t");
   Serial.print(t);
-  Serial.print(" *C ");
-
-  Serial.print("Índice de calor: ");
+  Serial.print("\t");
+  Serial.print("\t");
   Serial.print(hic);
-  Serial.print(" *C ");
-
-  Serial.print("Humedad de Suelo: ");
+  Serial.print("\t");
+  Serial.print("\t");
   Serial.print(soil_value);
-  Serial.println("%");
+  Serial.print("\t");
+  Serial.print("\t");
+  if (isButtonPressed) {
+    Serial.print("True");
+  } else {
+    Serial.print("False");
+  }
+  
+  Serial.print("\n");
  
+  // Reset the value of the button
+  isButtonPressed = false;
+}
+
+//  This function returns the analog soil moisture measurement
+int readSensor(int pin) {
+	digitalWrite(pin, HIGH);	// Turn the sensor ON
+	delay(10);							// Allow power to settle
+	int val = analogRead(pin);	// Read the analog value form sensor
+	digitalWrite(pin, LOW);		// Turn the sensor OFF
+	return val;							// Return analog moisture value
 }

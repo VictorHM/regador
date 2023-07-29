@@ -1,0 +1,10 @@
+Primer sensor
+DHT11 sensor de humedad y de temperatura. 
+Conexión: Hay solo 3 pines saliendo del montaje, porque uno de los pines
+no se usa. Hay que tener en cuenta que ese está puenteado para ser el que recibe la corriente.
+Desde detrás del sensor, pin-1 es GND, pin-2 es VCC (conectado a 3.5V) y pin-3 es datos (va a la entrada de
+datos de Arduino).
+
+Test: tomando datos resulta que la temperatura medida es 17 grados. Según el sensor de la calefacción,
+debería ser 20. Puede ser por la distancia o mala calibración. Comprobar con un segundo sensor cuando pueda.
+
