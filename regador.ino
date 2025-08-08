@@ -20,6 +20,7 @@ DHT dht(DHTPIN, DHTTYPE);
 *******************************/
 int soil_pin = A0;
 int soil_value;
+int soil_power_pin = 4;
 
 /********************************
  * Variables de control
@@ -41,6 +42,8 @@ void setup() {
   // initialize the pushbutton pin as an input:
   pinMode(buttonPin, INPUT);
   pinMode(soil_pin, INPUT);
+  pinMode(soil_power_pin, OUTPUT);
+  digitalWrite(soil_power_pin, LOW);
 }
 
 void loop() {
@@ -115,9 +118,9 @@ void loop() {
 
 //  This function returns the analog soil moisture measurement
 int readSensor(int pin) {
-	digitalWrite(pin, HIGH);	// Turn the sensor ON
-	delay(10);							// Allow power to settle
-	int val = analogRead(pin);	// Read the analog value form sensor
-	digitalWrite(pin, LOW);		// Turn the sensor OFF
-	return val;							// Return analog moisture value
+        digitalWrite(soil_power_pin, HIGH);        // Turn the sensor ON
+        delay(10);                                     // Allow power to settle
+        int val = analogRead(pin);      // Read the analog value form sensor
+        digitalWrite(soil_power_pin, LOW);         // Turn the sensor OFF
+        return val;                                    // Return analog moisture value
 }
